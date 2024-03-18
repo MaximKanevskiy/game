@@ -5,6 +5,7 @@ class Ship:
     def __init__(self, ai_game):
         """Инициализирует корабль и задаёт его начальную позицию."""
         self.screen = ai_game.screen
+        self.settings = ai_game.settings
         self.screen_rectangle = ai_game.screen.get_rect()
         # Загружает изображение корабля и получает прямоугольник.
 
@@ -20,13 +21,18 @@ class Ship:
         self.moving_right = False
         self.moving_left = False
 
-    def update(self):
+        self.x = float(self.rectangle.x)
+
+    def update(self) -> None:
         """Обновляет позицию корабля с учётом флага."""
         if self.moving_right:
-            self.rectangle.x += 1
+            self.x += self.settings.ship_speed
         if self.moving_left:
-            self.rectangle.x -= 1
+            self.x -= self.settings.ship_speed
 
-    def blit_me(self):
+        # Обновление атрибута rectangle на основании self.x
+        self.rectangle.x = self.x
+
+    def blit_me(self) -> None:
         """Рисует корабль в текущей позиции."""
         self.screen.blit(self.image, self.rectangle)
