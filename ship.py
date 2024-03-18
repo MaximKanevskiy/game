@@ -25,9 +25,9 @@ class Ship:
 
     def update(self) -> None:
         """Обновляет позицию корабля с учётом флага."""
-        if self.moving_right:
+        if self.moving_right and self.rectangle.right < self.screen_rectangle.right:
             self.x += self.settings.ship_speed
-        if self.moving_left:
+        if self.moving_left and self.rectangle.left > 0:
             self.x -= self.settings.ship_speed
 
         # Обновление атрибута rectangle на основании self.x
