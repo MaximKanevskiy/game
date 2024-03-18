@@ -9,10 +9,12 @@ class Ship:
         # Загружает изображение корабля и получает прямоугольник.
 
         self.image = pygame.image.load('images/ship.bmp')
+        self.image = pygame.transform.scale(
+            self.image, (self.image.get_width() // 3, self.image.get_height() // 3))
         self.rectangle = self.image.get_rect()
 
         # Каждый новый корабль появляется у нижнего края экрана.
-        self.rectangle.mid_bottom = self.screen_rectangle.midbottom
+        self.rectangle.midbottom = self.screen_rectangle.midbottom
 
     def blit_me(self):
         """Рисует корабль в текущей позиции."""
