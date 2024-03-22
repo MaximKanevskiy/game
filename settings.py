@@ -8,3 +8,4 @@ class Settings:
         self.background_color = (230, 230, 230)  # светло-серый фон
         self.ship_speed = 0.75
         self.bullet_speed = 2
+        self.bullets_allowed = 2
