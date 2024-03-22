@@ -74,7 +74,7 @@ class AlienInvasion:
             if bullet.rectangle.bottom <= 0:
                 self.bullets.remove(bullet)
 
-    def _create_fleet(self):
+    def _create_fleet(self) -> None:
         """Создание флота вторжения."""
         # Создание пришельца и вычисление количества пришельцев в ряду
         # Интервал между соседними пришельцами равен ширине пришельца.
@@ -85,11 +85,15 @@ class AlienInvasion:
 
         # Создание первого ряда пришельцев.
         for alien_number in range(number_aliens_x):
-            # Создание пришельца и размещение его в ряду.
-            alien = Alien(self)
-            alien.x = alien_width + 2 * alien_width * alien_number
-            alien.rect.x = alien.x
-            self.aliens.add(alien)
+            self._create_alien(alien_number)
+
+    def _create_alien(self, alien_number: int) -> None:
+        """Создание пришельца и размещение его в ряду."""
+        alien = Alien(self)
+        alien_width = alien.rect.width
+        alien.x = alien_width + 2 * alien_width * alien_number
+        alien.rect.x = alien.x
+        self.aliens.add(alien)
 
     def _update_screen(self) -> None:
         """Обновляет изображение на экране и отображает новый экран."""
