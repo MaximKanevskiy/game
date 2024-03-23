@@ -105,7 +105,7 @@ class AlienInvasion:
         """Опускает весь флот и меняет направление флота."""
         for alien in self.aliens.sprites():
             alien.rect.y += self.settings.fleet_drop_speed
-            self.settings.fleet_direction *= -1
+        self.settings.fleet_direction *= -1
 
     def _create_alien(self, alien_number: int, row_number: int) -> None:
         """Создание пришельца и размещение его в ряду."""
@@ -119,6 +119,7 @@ class AlienInvasion:
 
     def _update_aliens(self) -> None:
         """Обновляет позиции всех пришельцев."""
+        self._check_fleet_edges()
         self.aliens.update()
 
     def _update_screen(self) -> None:
