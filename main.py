@@ -30,6 +30,7 @@ class AlienInvasion:
             self.bullets.update()
             self._update_bullets()
             self._update_aliens()
+            self._check_aliens_on_screen()
             self._update_screen()
 
     def _check_events(self) -> None:
@@ -74,6 +75,14 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rectangle.bottom <= 0:
                 self.bullets.remove(bullet)
+
+            # Проверка попаданий в пришельцев.
+            # При обнаружении попадания удалить снаряд и пришельца.
+            for alien in self.aliens.sprites():
+                if bullet.rectangle.colliderect(alien.rect):
+                    self.bullets.remove(bullet)
+                    self.aliens.remove(alien)
+                    break
 
     def _create_fleet(self) -> None:
         """Создание флота вторжения."""
@@ -131,6 +140,10 @@ class AlienInvasion:
         self.aliens.draw(self.screen)
 
         pygame.display.flip()
+
+    def _check_aliens_on_screen(self) -> None:
+        if len(self.aliens) == 0:
+            self._create_fleet()
 
 
 if __name__ == '__main__':
