@@ -29,6 +29,7 @@ class AlienInvasion:
             self.ship.update()
             self.bullets.update()
             self._update_bullets()
+            self._update_aliens()
             self._update_screen()
 
     def _check_events(self) -> None:
@@ -93,7 +94,20 @@ class AlienInvasion:
             for alien_number in range(number_aliens_x):
                 self._create_alien(alien_number, row_number)
 
-    def _create_alien(self, alien_number, row_number):
+    def _check_fleet_edges(self) -> None:
+        """Реагирует на достижение пришельцем края экрана."""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self) -> None:
+        """Опускает весь флот и меняет направление флота."""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+            self.settings.fleet_direction *= -1
+
+    def _create_alien(self, alien_number: int, row_number: int) -> None:
         """Создание пришельца и размещение его в ряду."""
         alien = Alien(self)
         alien_width, alien_height = alien.rect.size
@@ -102,6 +116,10 @@ class AlienInvasion:
 
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
+
+    def _update_aliens(self) -> None:
+        """Обновляет позиции всех пришельцев."""
+        self.aliens.update()
 
     def _update_screen(self) -> None:
         """Обновляет изображение на экране и отображает новый экран."""
