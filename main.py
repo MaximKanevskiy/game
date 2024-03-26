@@ -1,5 +1,6 @@
 import sys
 import pygame
+import time
 
 from settings import Settings
 from ship import Ship
@@ -17,7 +18,14 @@ class AlienInvasion:
             (self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
         self.ship = Ship(self)
+
         self.bullets = pygame.sprite.Group()
+        self.bullet_charge = 0
+        self.is_charging = False
+        self.is_bullet_alive = False
+        self.start_charge_time = 0
+        self.charge_time = 0
+
         self.aliens = pygame.sprite.Group()
 
         self._create_fleet()
@@ -49,8 +57,9 @@ class AlienInvasion:
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
-        elif event.key == pygame.K_SPACE:
-            self._fire_bullet()
+        elif event.key == pygame.K_SPACE and not self.is_bullet_alive:
+            self.is_charging = True
+            self.start_charge_time = time.time()
         elif event.key == pygame.K_q:
             sys.exit()
 
@@ -60,27 +69,46 @@ class AlienInvasion:
             self.ship.moving_right = False
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
+        elif event.key == pygame.K_SPACE and not self.is_bullet_alive:
+            self.is_charging = False
+            self.charging_time = time.time() - self.start_charge_time
+            self._fire_bullet()
 
     def _fire_bullet(self):
         """Создание нового снаряда и включение его в группу bullets."""
-        if len(self.bullets) < self.settings.bullets_allowed:
+        self._calculate_charges()
+
+        if len(self.bullets) < self.settings.bullets_allowed and self.bullet_charge > 0:
             new_bullet = Bullet(self)
+            self.is_bullet_alive = True
             self.bullets.add(new_bullet)
+
+        # Обновление счётчика времени, когда пуля накапливала заряд
+        self.charge_time = 0
+
+    def _calculate_charges(self):
+        """Определение зарядов пули."""
+        if self.charge_time < 2:
+            self.bullet_charge = 1
+        else:
+            self.bullet_charge = 2
 
     def _update_bullets(self):
         """Обновляет позиции снарядов и уничтожает старые снаряды."""
         # Обновление позиций снарядов.
         self.bullets.update()
+
         # Удаление снарядов, вышедших за край экрана.
         for bullet in self.bullets.copy():
-            if bullet.rectangle.bottom <= 0:
+            if not self.bullet_charge or bullet.rectangle.bottom <= 0:
                 self.bullets.remove(bullet)
+                self.is_bullet_alive = False
 
             # Проверка попаданий в пришельцев.
             # При обнаружении попадания удалить снаряд и пришельца.
             for alien in self.aliens.sprites():
                 if bullet.rectangle.colliderect(alien.rect):
-                    self.bullets.remove(bullet)
+                    self.bullet_charge -= 1
                     self.aliens.remove(alien)
                     break
 
