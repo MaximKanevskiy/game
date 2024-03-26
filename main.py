@@ -71,20 +71,17 @@ class AlienInvasion:
             self.ship.moving_left = False
         elif event.key == pygame.K_SPACE and not self.is_bullet_alive:
             self.is_charging = False
-            self.charging_time = time.time() - self.start_charge_time
+            self.charge_time = time.time() - self.start_charge_time
             self._fire_bullet()
 
     def _fire_bullet(self):
         """Создание нового снаряда и включение его в группу bullets."""
         self._calculate_charges()
 
-        if len(self.bullets) < self.settings.bullets_allowed and self.bullet_charge > 0:
+        if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self)
             self.is_bullet_alive = True
             self.bullets.add(new_bullet)
-
-        # Обновление счётчика времени, когда пуля накапливала заряд
-        self.charge_time = 0
 
     def _calculate_charges(self):
         """Определение зарядов пули."""
@@ -92,6 +89,9 @@ class AlienInvasion:
             self.bullet_charge = 1
         else:
             self.bullet_charge = 2
+
+        # Обновление счётчика времени, когда пуля накапливала заряд
+        self.charge_time = 0
 
     def _update_bullets(self):
         """Обновляет позиции снарядов и уничтожает старые снаряды."""
