@@ -13,7 +13,7 @@ class Bullet(Sprite):
         self.image = pygame.transform.scale(
             self.image, (self.image.get_width() // 2, self.image.get_height() // 2))
         self.rectangle = self.image.get_rect()
-        self.rectangle.midtop = ai_game.ship.rectangle.midtop
+        self.rectangle.midtop = ai_game.ship.rect.midtop
 
         # Позиция снаряда хранится в вещественном формате.
         self.y = float(self.rectangle.y)

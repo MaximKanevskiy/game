@@ -8,11 +8,12 @@ class Settings:
         self.background_color = (230, 230, 230)  # светло-серый фон
 
         self.ship_speed = 0.75
+        self.ship_limit = 2
 
         self.bullet_speed = 0.5
         self.bullets_allowed = 1
 
-        self.alien_speed = 0.2
+        self.alien_speed = 1
         self.alien_width = 76
         self.alien_height = 80
         self.fleet_drop_speed = 10

@@ -6,6 +6,7 @@ from settings import Settings
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from game_stats import GameStats
 
 
 class AlienInvasion:
@@ -17,6 +18,9 @@ class AlienInvasion:
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
+
+        self.stats = GameStats(self)
+
         self.ship = Ship(self)
 
         self.bullets = pygame.sprite.Group()
@@ -122,7 +126,7 @@ class AlienInvasion:
         number_aliens_x = available_space_x // (2 * alien_width)
 
         """Определяет количество рядов, помещающихся на экране."""
-        ship_height = self.ship.rectangle.height
+        ship_height = self.ship.rect.height
         available_space_y = (self.settings.screen_height - (3 * alien_height) - ship_height)
         number_rows = available_space_y // (2 * alien_height)
 
@@ -159,6 +163,12 @@ class AlienInvasion:
         self._check_fleet_edges()
         self.aliens.update()
 
+        # Проверка коллизий пришелец-корабль
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+
+        self._check_aliens_bottom()
+
     def _update_screen(self) -> None:
         """Обновляет изображение на экране и отображает новый экран."""
         self.screen.fill(self.settings.background_color)
@@ -172,6 +182,32 @@ class AlienInvasion:
     def _check_aliens_on_screen(self) -> None:
         if len(self.aliens) == 0:
             self._create_fleet()
+
+    def _check_aliens_bottom(self) -> None:
+        """Проверяет, добрались ли пришельцы до нижнего края экрана."""
+        screen_rect = self.screen.get_rect()
+
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= screen_rect.bottom:
+                # Происходит то же, что при столкновении с кораблем.
+                self._ship_hit()
+                break
+
+    def _ship_hit(self):
+        """Обрабатывает столкновение корабля с пришельцем."""
+        # Уменьшение ships_left.
+        self.stats.ships_left -= 1
+
+        # Очистка списков пришельцев и снарядов.
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # Создание нового флота и размещение корабля в центре.
+        self._create_fleet()
+        self.ship.center_ship()
+
+        print(self.stats.ships_left)
+        time.sleep(0.5)
 
 
 if __name__ == '__main__':
