@@ -12,7 +12,7 @@ class Settings:
         self.bullet_speed = 0.5
         self.bullets_allowed = 1
 
-        self.alien_speed = 0.05
+        self.alien_speed = 0.2
         self.alien_width = 76
         self.alien_height = 80
         self.fleet_drop_speed = 10
